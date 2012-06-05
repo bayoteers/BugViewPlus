@@ -1,0 +1,73 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the BugViewPlus Bugzilla Extension.
+  #
+  # The Initial Developer of the Original Code is Pami Ketolainen
+  # Portions created by the Initial Developer are Copyright (C) 2012 the
+  # Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s):
+  #   Pami Ketolainen <pami.ketolainen@gmail.com>
+  #%]
+
+[%
+# Test whether this bug is in fact a feature, and whether this
+# user is a feature admin. If so, make description editable.
+editable = Param('bvp_description_editable_types');
+can_edit_description = (user.in_group('bvp_edit_description') &&
+                            editable.grep(bug.bug_severity).size());
+%]
+
+[% IF can_edit_description %]
+<pre id="bvp_original_description" style="display: none;">
+[% comments.${description}.body %]
+</pre>
+
+<script>
+
+function toggle_comment_edit(link)
+{
+    var element = $("#comment_text_[% description %]").first();
+    var nodeName = element[0].nodeName;
+    if (nodeName == "PRE") {
+        $(link).text("cancel")
+            .attr("title", "Cancel description changes");
+        edit = $("<textarea/>")
+            .attr("id", "comment_text_[% description %]")
+            .attr("name", "bvp_description")
+            .attr("cols", 80)
+            .attr("rows", 25)
+            .text($("#bvp_original_description").text());
+        element.hide()
+            .attr("id", "comment_text_[% description %]_orig")
+            .before(edit);
+    } else if (nodeName == "TEXTAREA") {
+        $(link).text("edit")
+            .attr("title", "Edit description")
+        element.remove();
+        $("#comment_text_[% description %]_orig")
+            .attr("id", "comment_text_[% description %]")
+            .show();
+    }
+}
+
+$(function() {
+    $('<a href="#">edit</a>')
+        .attr("title", "Edit description")
+        .click(toggle_comment_edit)
+        .insertBefore("#comment_link_[% description %]")
+        .before(" [").after("] ");
+});
+
+</script>
+
+[% END %]
+
