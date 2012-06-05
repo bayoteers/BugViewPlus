@@ -33,12 +33,12 @@ can_edit_description = (user.in_group('bvp_edit_description') &&
 
 <script>
 
-function toggle_comment_edit(link)
+function toggle_comment_edit()
 {
     var element = $("#comment_text_[% description %]").first();
     var nodeName = element[0].nodeName;
     if (nodeName == "PRE") {
-        $(link).text("cancel")
+        $(this).text("cancel")
             .attr("title", "Cancel description changes");
         edit = $("<textarea/>")
             .attr("id", "comment_text_[% description %]")
@@ -50,13 +50,14 @@ function toggle_comment_edit(link)
             .attr("id", "comment_text_[% description %]_orig")
             .before(edit);
     } else if (nodeName == "TEXTAREA") {
-        $(link).text("edit")
+        $(this).text("edit")
             .attr("title", "Edit description")
         element.remove();
         $("#comment_text_[% description %]_orig")
             .attr("id", "comment_text_[% description %]")
             .show();
     }
+    return false;
 }
 
 $(function() {
