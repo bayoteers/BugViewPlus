@@ -1,0 +1,8 @@
+Bugzilla extension providing several enhancements to the normal bug viewing
+experience.
+
+ * Allow editting the bug description
+ * Toggle between simple view and the standard editor view
+    * TODO: move this feature here from JollaHacks
+
+Requires jQuery, so BayotBase extension is required for this to work
