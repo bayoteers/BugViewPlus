@@ -40,6 +40,22 @@ sub get_param_list {
             choices => \@legal_severities,
             default => [ $legal_severities[-1] ]
         },
+        {
+            name => 'bvp_simple_bug_view',
+            desc => 'Enable/disable the simplified bug view.',
+            type => 'b',
+            default => 1
+        },
+        {
+            name => 'bvp_simple_bug_fields',
+            desc => 'The bug fields shown in the simplified bug view. '.
+                'Use a comma separated list of bug field names. "importance" '.
+                'can be used to get the combined priority/severity/votes. '.
+                '"#" can be used to split the fields in several columns',
+            type => 't',
+            default => 'bug_status,product,component,importance,#,'.
+                'reporter,assigned_to'
+        },
     );
     return @param_list;
 }

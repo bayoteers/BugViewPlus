@@ -1,0 +1,102 @@
+[% IF Param("bvp_simple_bug_view") %]
+
+<script type="text/javascript">
+
+// Toggle display mode between simple info and editor views
+function toggleBugEditor()
+{
+    // Togle element visibility
+    $("table.edit_form, table#bz_big_form_parts").toggle();
+    $("table#bug_simple_info").toggle();
+    // Change the toggle button text
+    $("div.bz_alias_short_desc_container .knob-buttons #toggleEdit").val(
+        function(index, value){
+            return value == "Editor" ? "No editor" : "Editor";
+        });
+    // Move comment box depending on the view
+    if ($("table#bug_simple_info").css("display") == "none") {
+        $(".bz_section_additional_comments").insertAfter("table#attachment_table");
+        $.cookie("hideBugEditor", null);
+    } else {
+        $(".bz_section_additional_comments").insertAfter("div#comments");
+        $.cookie("hideBugEditor", true);
+    }
+}
+
+// Initialize simple info view
+$(function() {
+    var toggleButton = $("<input type='button' value='No editor' id='toggleEdit'/>");
+    toggleButton.click(toggleBugEditor);
+    $("div.bz_alias_short_desc_container .knob-buttons").prepend(toggleButton);
+    $("div.bz_alias_short_desc_container").after($("#bug_simple_info"));
+    if ($.cookie("hideBugEditor")) {
+        toggleBugEditor();
+    }
+});
+
+</script>
+
+<table id="bug_simple_info" style="display: none;">
+<tr><td valign="top"><table>
+[% show_fields = Param("bvp_simple_bug_fields").split('\s*,\s*') %]
+[% FOREACH name IN show_fields %]
+[% IF name == '#' %]
+    </table></td><td valign="top"><table>[% NEXT %]
+[% END %]
+<tr>
+    [% SWITCH name %]
+        [% CASE ['assigned_to', 'qa_contact', 'reporter'] %]
+            <td class="field_label">
+                <b><a href="page.cgi?id=fields.html#[% name %]">
+                [% bug_fields.${name}.description %]</a></b>:
+            </td>
+            <td>[% INCLUDE global/user.html.tmpl who = bug.${name} %]</td>
+
+        [% CASE 'importance' %]
+            <td class="field_label">
+                <b><a href="page.cgi?id=fields.html#importance">Importance</a></b>:
+            </td>
+            <td>
+            [% INCLUDE bug/field.html.tmpl
+                bug = bug, field = select_fields.priority,
+                no_tds = 1, value = bug.priority
+                editable = 0 %]
+            [%+ INCLUDE bug/field.html.tmpl
+                bug = bug, field = select_fields.bug_severity,
+                no_tds = 1, value = bug.bug_severity
+                editable = 0 %]
+            [% IF bug.use_votes %]
+                <span id="votes_container">
+                [% IF bug.votes %]
+                    with
+                    <a href="votes.cgi?action=show_bug&amp;bug_id=[% bug.bug_id %]">
+                    [% bug.votes %] vote[% "s" IF bug.votes > 1 %]</a>
+                [% END %]
+                (<a href="votes.cgi?action=show_user&amp;bug_id=
+                    [% bug.bug_id %]#vote_[% bug.bug_id %]">vote</a>)
+                </span>
+            [% END %]
+            </td>
+        [% CASE ['work_time', 'actual_time'] %]
+            [%#
+            # bug_fields has work_time, but the real field seems to be
+            # actual_time
+            #%]
+            [% INCLUDE bug/field.html.tmpl
+                bug = bug, field = bug_fields.work_time,
+                value = bug.actual_time, editable = 0 %]
+
+        [% CASE %]
+            [% TRY %]
+                [% INCLUDE bug/field.html.tmpl
+                    bug = bug, field = bug_fields.${name},
+                    value = bug.${name}, editable = 0 %]
+            [% CATCH %]
+                <td>Failed to display field '[% name %]'</td>
+            [% END %]
+    [% END %]
+</tr>
+[% END %]
+</table></td></tr>
+</table>
+[% END # Simple bug view %] 
