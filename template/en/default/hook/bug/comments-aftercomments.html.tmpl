@@ -61,11 +61,16 @@ function toggle_comment_edit()
 }
 
 $(function() {
+    // Add edit description link
     $('<a href="#">edit</a>')
         .attr("title", "Edit description")
         .click(toggle_comment_edit)
         .insertBefore("#comment_link_[% description %]")
         .before(" [").after("] ");
+
+    // Add last comment link
+    $("ul.bz_collapse_expand_comments").append(
+        '<li><a href="#c[% comments.size - 1 %]">To latest comment</a></li>');
 });
 
 </script>
