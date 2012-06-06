@@ -2,7 +2,8 @@ Bugzilla extension providing several enhancements to the normal bug viewing
 experience.
 
  * Allow editting the bug description
+ * Add shortcut link to latest comment on top of the comment list
+ * Format "<severity> #" to bug link in comments
  * Toggle between simple view and the standard editor view
-    * TODO: move this feature here from JollaHacks
 
-Requires jQuery, so BayotBase extension is required for this to work
+Expects jQuery, so BayotBase extension is required for this to work
