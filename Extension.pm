@@ -24,7 +24,10 @@ use strict;
 use base qw(Bugzilla::Extension);
 
 use Bugzilla::Extension::BugViewPlus::Util;
+
+use Bugzilla::Field qw(get_legal_field_values);
 use Bugzilla::Group;
+use Bugzilla::Template;
 use Bugzilla::Util qw(trick_taint);
 
 our $VERSION = '0.01';
@@ -89,4 +92,29 @@ sub bug_end_of_update {
         }
     }
 }
+
+sub bug_format_comment {
+    my ($self, $args) = @_;
+    my $regexes = $args->{regexes};
+
+    # Turn '<severity> #' into bug link in comments
+    if (!defined $self->{bug_severities}) {
+        $self->{bug_severities} = get_legal_field_values('bug_severity');
+    }
+    foreach my $value (@{$self->{bug_severities}}) {
+        # We could use Bugzilla::Template::get_bug_link(), but we don't want to
+        # fetch each bug mentioned from the database
+        push (@$regexes, { match => qr/($value)\s*(\d+)/i,
+                replace => \&_replace_bug_link } );
+    }
+}
+
+sub _replace_bug_link {
+    my $args = shift;
+    my $type = $args->{matches}->[0];
+    my $id = $args->{matches}->[1];
+
+    return Bugzilla::Template::get_bug_link($id, $type." ".$id);
+}
+
 __PACKAGE__->NAME;
