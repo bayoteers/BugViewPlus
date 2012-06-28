@@ -56,8 +56,9 @@ sub bug_end_of_update {
     my $cgi = Bugzilla->cgi;
     my $dbh = Bugzilla->dbh;
     my ($bug, $timestamp) = @$args{qw(bug timestamp)};
+    my $bug_id = $cgi->param('id') || 0;
     
-    if ($bug->bug_id eq $cgi->param('id')) {
+    if ($bug->bug_id == $bug_id) {
 
         # Edit description related stuff
         if (Bugzilla->user->in_group('bvp_edit_description')) {
