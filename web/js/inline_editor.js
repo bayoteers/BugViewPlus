@@ -93,9 +93,8 @@ var _inlineEditSave = function(ev)
     var row = $(ev.currentTarget).parents('tr').eq(0).prev("tr.bz_bugitem");
     var button = row.find('button');
     var bug = button.data('bug');
-    var editRow = row.next('tr.editor_row');
-    editRow.pushStack(editRow.next('tr.comment_row'))
-            .find('*').filter(':input').each(function() {
+    var editRows = row.nextUntil('tr.bz_bugitem');
+    editRows.find('td > *').filter(':input').each(function() {
         // Make sure all values are set
         var input = $(this);
         var name = input.attr('name');
