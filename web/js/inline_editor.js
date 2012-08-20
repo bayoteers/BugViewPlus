@@ -93,10 +93,9 @@ var _inlineEditSave = function(ev)
     var row = $(ev.currentTarget).parents('tr').eq(0).prev("tr.bz_bugitem");
     var button = row.find('button');
     var bug = button.data('bug');
-    var editRows = row.next('tr.editor_row');
-    editRows.pushStack(row.next('tr.comment_row'));
-
-    editRows.find('*').filter(':input').each(function() {
+    var editRow = row.next('tr.editor_row');
+    editRow.pushStack(editRow.next('tr.comment_row'))
+            .find('*').filter(':input').each(function() {
         // Make sure all values are set
         var input = $(this);
         var name = input.attr('name');
