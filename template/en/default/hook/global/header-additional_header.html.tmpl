@@ -1,0 +1,23 @@
+[% IF template.name == 'list/list.html.tmpl' %]
+<script type="text/javascript" src="extensions/BugViewPlus/web/js/inline_editor.js"></script>
+<script type="text/javascript">
+var INLINE_EDIT_COLUMNS = [
+[% FOREACH column = displaycolumns %]
+    "[% column %]",
+[% END %]
+];
+
+$(initInlineEditor);
+</script>
+<style>
+tr.comment_row td {
+    vertical-align: top;
+    text-align: center;
+    border-bottom: dashed 1px;
+}
+button.inline_edit {
+    width: 1.5em;
+    height: 1.5em;
+}
+</style>
+[% END %]

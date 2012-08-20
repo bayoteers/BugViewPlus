@@ -5,5 +5,6 @@ experience.
  * Add shortcut link to latest comment on top of the comment list
  * Format "<severity> #" to bug link in comments
  * Toggle between simple view and the standard editor view
+ * Inline editing in bug list
 
 Expects jQuery, so BayotBase extension is required for this to work
