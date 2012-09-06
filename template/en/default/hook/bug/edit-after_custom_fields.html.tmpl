@@ -7,7 +7,7 @@
 function toggleBugEditor()
 {
     // Togle element visibility
-    $("table.edit_form, table#bz_big_form_parts").toggle();
+    $("table.edit_form").toggle();
     $("table#bug_simple_info").toggle();
     // Change the toggle button text
     $("div.bz_alias_short_desc_container .knob-buttons #toggleEdit").val(
@@ -16,10 +16,14 @@ function toggleBugEditor()
         });
     // Move comment box depending on the view
     if ($("table#bug_simple_info").css("display") == "none") {
-        $(".bz_section_additional_comments").insertAfter("table#attachment_table");
+        $("table#bz_big_form_parts").insertAfter("table.edit_form");
+        $("div.bz_group_visibility_section,div.bz_add_comment").show();
+        $("div#add_comment").appendTo("table#bz_big_form_parts td:first");
         $.cookie("hideBugEditor", null);
     } else {
-        $(".bz_section_additional_comments").insertAfter("div#comments");
+        $("table#bz_big_form_parts").insertAfter("div#comments");
+        $("div.bz_group_visibility_section,div.bz_add_comment").hide();
+        $("div#add_comment").prependTo("table#bz_big_form_parts td:first");
         $.cookie("hideBugEditor", true);
     }
 }
