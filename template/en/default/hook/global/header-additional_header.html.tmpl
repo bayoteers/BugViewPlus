@@ -1,5 +1,6 @@
 [% IF template.name == 'list/list.html.tmpl' %]
-<script type="text/javascript" src="extensions/BugViewPlus/web/js/inline_editor.js"></script>
+<script type="text/javascript"
+    src="[% 'extensions/BugViewPlus/web/js/inline_editor.js' FILTER mtime %]"></script>
 <script type="text/javascript">
 var INLINE_EDIT_COLUMNS = [
 [% FOREACH column = displaycolumns %]
