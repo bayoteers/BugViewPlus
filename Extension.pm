@@ -28,7 +28,7 @@ use Bugzilla::Extension::BugViewPlus::Util;
 use Bugzilla::Field qw(get_legal_field_values);
 use Bugzilla::Group;
 use Bugzilla::Template;
-use Bugzilla::Util qw(trick_taint);
+use Bugzilla::Util qw(detaint_natural trick_taint);
 
 our $VERSION = '0.01';
 
@@ -56,7 +56,9 @@ sub bug_end_of_update {
     my $cgi = Bugzilla->cgi;
     my $dbh = Bugzilla->dbh;
     my ($bug, $timestamp) = @$args{qw(bug timestamp)};
-    my $bug_id = $cgi->param('id') || 0;
+    my $bug_id = $cgi->param('id');
+    detaint_natural($bug_id);
+    $bug_id ||= 0;
     
     if ($bug->bug_id == $bug_id) {
 
