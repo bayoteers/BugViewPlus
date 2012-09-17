@@ -1,7 +1,6 @@
 var INLINE_EDIT_COL_MAP = {
     short_short_desc: 'summary',
     assigned_to_realname: 'assigned_to',
-    actual_time: 'work_time',
 };
 
 
@@ -52,12 +51,13 @@ var _openInlineEdit = function(bug, button, row)
     var editRow = $('<tr class="editor_row"><td></td></tr>');
     INLINE_EDIT_COLUMNS.forEach(function(col) {
         var name = INLINE_EDIT_COL_MAP[col] || col;
+        var fname = name == 'actual_time' ? 'work_time' : name;
         var cell = $('<td></td>');
         cell.addClass('bz_'+col+'_column');
         editRow.append(cell);
-        var fd = Bug.fd(name);
+        var fd = Bug.fd(fname);
         if (fd == undefined || fd.immutable) return;
-        row.find('td.bz_' + col + '_column').data('name', fd.name);
+        row.find('td.bz_' + col + '_column').data('name', name);
         var input = bug.createInput(fd, false, true);
         if (['remaining_time', 'estimated_time', 'work_time'].indexOf(fd.name) > -1){
             input.css('width', '4em');
