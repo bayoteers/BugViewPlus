@@ -1,6 +1,7 @@
 var INLINE_EDIT_COL_MAP = {
     short_short_desc: 'summary',
     assigned_to_realname: 'assigned_to',
+    bug_status: 'status',
 };
 
 
@@ -48,43 +49,53 @@ var _openInlineEdit = function(bug, button, row)
     }).off('click').on('click', inlineEditCancel);
 
     var colCount = row.find('td').size();
-    var editRow = $('<tr class="editor_row"><td></td></tr>');
-    INLINE_EDIT_COLUMNS.forEach(function(col) {
-        var name = INLINE_EDIT_COL_MAP[col] || col;
-        var fname = name == 'actual_time' ? 'work_time' : name;
+    var editRow = $('<tr class="editor_row"></tr>');
+    row.find('td').each(function() {
+        var orig_cell = $(this);
+        var name;
+        $.each(INLINE_EDIT_COLUMNS, function(i, col) {
+            if (orig_cell.hasClass('bz_' + col + '_column')) {
+                name = INLINE_EDIT_COL_MAP[col] || col;
+                return false;
+            }
+        });
         var cell = $('<td></td>');
-        cell.addClass('bz_'+col+'_column');
+        cell.addClass(orig_cell[0].className);
         editRow.append(cell);
-        var fd = Bug.fd(fname);
-        if (fd == undefined || fd.immutable) return;
-        row.find('td.bz_' + col + '_column').data('name', name);
-        var input = bug.createInput(fd, false, true);
-        if (['remaining_time', 'estimated_time', 'work_time'].indexOf(fd.name) > -1){
-            input.css('width', '4em');
-        } else {
-            input.css('width', '100%');
+        if (name) {
+            var fname = name == 'actual_time' ? 'work_time' : name
+            var fd = Bug.fd(fname);
+            if (fd == undefined || fd.immutable) return;
+            orig_cell.data('name', name);
+            var input = bug.createInput(fd, false, true);
+            if (['remaining_time', 'estimated_time', 'work_time'].indexOf(fd.name) > -1){
+                input.css('width', '4em');
+            } else {
+                input.css('width', '100%');
+            }
+            if (fd.name == 'work_time') cell.append("+");
+            cell.append(input);
+        } else if (orig_cell.hasClass('button_column')) {
+            $('<buton class="inline_edit" type="button">Save</button>')
+                .button({
+                    text: false,
+                    icons: {primary: 'ui-icon-disk'},
+                    })
+                .appendTo(cell)
+                .on('click', _inlineEditSave);
         }
-        if (fd.name == 'work_time') cell.append("+");
-        cell.append(input);
     });
-    var cell = $('<td class="button_column"></td>');
-    var saveButton = $('<buton class="inline_edit" type="button">Save</button>').button({
-        text: false,
-        icons: {primary: 'ui-icon-disk'},
-    });
-    cell.append(saveButton);
-    editRow.append(cell);
-    saveButton.on('click', _inlineEditSave);
+
     row.after(editRow);
 
-    commentRow = $('<tr class="comment_row"><td></td></tr>');
-    var cell = $('<td colspan="'+INLINE_EDIT_COLUMNS.length+'"></td>');
-    cell.append("Comment:");
-    var comment = $('<textarea name="comment" rows="1" cols="80"></textarea>');
-    comment.focus(function(ev) { $(ev.currentTarget).attr('rows', 5)});
+    commentRow = $('<tr class="comment_row"><th>Comment:</th></tr>');
+    var cell = $('<td>').attr('colspan', colCount - 1);
+    var comment = $('<textarea name="comment" rows="1" cols="80"></textarea>')
+        .focus(function(ev) { $(ev.currentTarget).attr('rows', 5)})
+        .blur(function(ev) { $(ev.currentTarget).attr('rows', 1)})
+
     cell.append(comment);
     commentRow.append(cell);
-    commentRow.append('<td>');
     editRow.after(commentRow);
 };
 
