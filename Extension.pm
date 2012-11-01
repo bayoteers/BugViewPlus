@@ -56,10 +56,13 @@ sub bug_end_of_update {
     my $cgi = Bugzilla->cgi;
     my $dbh = Bugzilla->dbh;
     my ($bug, $timestamp) = @$args{qw(bug timestamp)};
+
+    # Get the bug id passed to processbug.cgi
     my $bug_id = $cgi->param('id');
-    detaint_natural($bug_id);
-    $bug_id ||= 0;
+    return unless $bug_id;
+    return unless detaint_natural($bug_id);
     
+    # Make sure we are udating the same bug and not some related bug
     if ($bug->bug_id == $bug_id) {
 
         # Edit description related stuff
