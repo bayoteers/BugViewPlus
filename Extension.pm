@@ -94,8 +94,6 @@ sub bug_format_comment {
         $self->{bug_severities} = get_legal_field_values('bug_severity');
     }
     foreach my $value (@{$self->{bug_severities}}) {
-        # We could use Bugzilla::Template::get_bug_link(), but we don't want to
-        # fetch each bug mentioned from the database
         push (@$regexes, { match => qr/($value)\s*(\d+)/i,
                 replace => \&_replace_bug_link } );
     }

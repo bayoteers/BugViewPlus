@@ -6,7 +6,7 @@
   # Copyright (C) 2012 Jolla Ltd.
   # Contact: Pami Ketolainen <pami.ketolainen@jollamobile.com>
   #%]
-[% IF Param("bvp_simple_bug_view") %]
+[% IF user.id AND Param("bvp_simple_bug_view") %]
 <tr><td>
 
 <script type="text/javascript">

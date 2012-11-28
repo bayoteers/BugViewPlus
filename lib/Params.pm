@@ -44,6 +44,12 @@ sub get_param_list {
             default => 'bug_status,product,component,importance,#,'.
                 'reporter,assigned_to'
         },
+        {
+            name => 'bvp_inline_editor',
+            desc => 'Enable/disable the bug list inline editor.',
+            type => 'b',
+            default => 1
+        },
     );
     return @param_list;
 }

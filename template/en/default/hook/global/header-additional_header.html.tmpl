@@ -6,7 +6,8 @@
   # Copyright (C) 2012 Jolla Ltd.
   # Contact: Pami Ketolainen <pami.ketolainen@jollamobile.com>
   #%]
-[% IF template.name == 'list/list.html.tmpl' %]
+[% IF template.name == 'list/list.html.tmpl'
+    AND user.id AND Param('bvp_inline_editor') %]
 <script type="text/javascript"
     src="[% 'extensions/BugViewPlus/web/js/inline_editor.js' FILTER mtime %]"></script>
 <script type="text/javascript">
