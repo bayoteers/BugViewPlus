@@ -96,8 +96,9 @@ sub bug_end_of_update {
 
 sub bug_format_comment {
     my ($self, $args) = @_;
-    my $regexes = $args->{regexes};
+    return unless Bugzilla->params->{bvp_linkify_severity};
 
+    my $regexes = $args->{regexes};
     # Turn '<severity> #' into bug link in comments
     if (!defined $self->{bug_severities}) {
         $self->{bug_severities} = get_legal_field_values('bug_severity');

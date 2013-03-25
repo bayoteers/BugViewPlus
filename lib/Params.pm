@@ -18,16 +18,21 @@ use Bugzilla::Field;
 sub get_param_list {
     my ($class) = @_;
 
-    my @legal_severities = @{get_legal_field_values('bug_severity')};
-
     my @param_list = (
         {
             name => 'bvp_description_editable_types',
             desc => 'Bug severities for which the description can be edited',
             type    => 'm',
-            choices => \@legal_severities,
-            default => [ $legal_severities[-1] ]
+            choices => get_legal_field_values('bug_severity'),
+            default => []
         },
+        {
+            name => 'bvp_linkify_severity',
+            desc => 'If true "<severity> #" will be linkified in bug comments',
+            type    => 'b',
+            default => 0,
+        },
+
         {
             name => 'bvp_simple_bug_view',
             desc => 'Enable/disable the simplified bug view.',
