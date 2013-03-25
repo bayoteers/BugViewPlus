@@ -27,7 +27,14 @@ sub install_update_db {
         Bugzilla::Group->create({
                 name => "bvp_edit_description",
                 description => "Users who can edit bug descriptions",
+                isbuggroup => 1,
+                isactive => 0,
             });
+    } elsif (!$edit_desc_group->is_bug_group) {
+        # Fix earlier installations group type
+        Bugzilla->dbh->do(
+            "UPDATE groups SET isbuggroup = 1, isactive = 0 WHERE id = ?",
+            undef, $edit_desc_group->id);
     }
 }
 
@@ -52,7 +59,9 @@ sub bug_end_of_update {
     if ($bug->bug_id == $bug_id) {
 
         # Edit description related stuff
-        if (Bugzilla->user->in_group('bvp_edit_description')) {
+        if (Bugzilla->user->in_group('bvp_edit_description') &&
+                grep {$_ eq $bug->bug_severity}
+                        @{Bugzilla->params->{bvp_description_editable_types}}) {
             # Current description text
             my $old_desc = ${ @{ $bug->comments }[0] }{'thetext'};
 
