@@ -15,13 +15,13 @@
 function toggleBugEditor()
 {
     // Togle element visibility
-    $("table.edit_form").toggle();
+    var editForm = $("table.edit_form").toggle();
     $("table#bug_simple_info").toggle();
     // Change the toggle button text
-    $("div.bz_alias_short_desc_container .knob-buttons #toggleEdit").val(
-        function(index, value){
-            return value == "Editor" ? "No editor" : "Editor";
-        });
+    var toggleButton = $("span#toggleEdit");
+    $("a", toggleButton).text(
+            $("table#bug_simple_info:visible").size() ?
+            "Show editor" : "Hide editor");
     // Move comment box depending on the view
     if ($("table#bug_simple_info").css("display") == "none") {
         $("table#bz_big_form_parts").insertAfter("table.edit_form");
@@ -34,13 +34,15 @@ function toggleBugEditor()
         $("div#add_comment").prependTo("table#bz_big_form_parts td:first");
         $.cookie("hideBugEditor", true);
     }
+    editForm.after(toggleButton);
 }
 
 // Initialize simple info view
 $(function() {
-    var toggleButton = $("<input type='button' value='No editor' id='toggleEdit'/>");
-    toggleButton.click(toggleBugEditor);
-    $("div.bz_alias_short_desc_container .knob-buttons").prepend(toggleButton);
+    var toggleButton = $('<span id="toggleEdit">[<a href="#">Hide editor</a>]</span>')
+        .css("float", "right");
+    $("table.edit_form").after(toggleButton);
+    $("a", toggleButton).click(toggleBugEditor);
     $("div.bz_alias_short_desc_container").after($("#bug_simple_info"));
     if ($.cookie("hideBugEditor")) {
         toggleBugEditor();
