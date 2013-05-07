@@ -61,16 +61,16 @@ $(function() {
 <tr>
     [% SWITCH name %]
         [% CASE ['assigned_to', 'qa_contact', 'reporter'] %]
-            <td class="field_label">
+            <th class="field_label">
                 <b><a href="page.cgi?id=fields.html#[% name %]">
                 [% bug_fields.${name}.description %]</a></b>:
-            </td>
+            </th>
             <td>[% INCLUDE global/user.html.tmpl who = bug.${name} %]</td>
 
         [% CASE 'importance' %]
-            <td class="field_label">
-                <b><a href="page.cgi?id=fields.html#importance">Importance</a></b>:
-            </td>
+            <th class="field_label">
+                <a href="page.cgi?id=fields.html#importance">Importance</a>:
+            </th>
             <td>
             [% INCLUDE bug/field.html.tmpl
                 bug = bug, field = select_fields.priority,
@@ -92,20 +92,18 @@ $(function() {
                 </span>
             [% END %]
             </td>
-        [% CASE ['work_time', 'actual_time'] %]
-            [%#
-            # bug_fields has work_time, but the real field seems to be
-            # actual_time
-            #%]
-            [% INCLUDE bug/field.html.tmpl
-                bug = bug, field = bug_fields.work_time,
-                value = bug.actual_time, editable = 0 %]
-
         [% CASE %]
             [% TRY %]
+                <th class="field_label">
+                    <a href="page.cgi?id=fields.html#[% name FILTER html %]">
+                        [%- field_descs.${name} FILTER html %]</a>:
+                </th>
+                <td>
                 [% INCLUDE bug/field.html.tmpl
                     bug = bug, field = bug_fields.${name},
-                    value = bug.${name}, editable = 0 %]
+                    value = bug.${name}, editable = 0,
+                    no_tds = 1 %]
+                </td>
             [% CATCH %]
                 <td>Failed to display field '[% name %]'</td>
             [% END %]
