@@ -7,14 +7,6 @@
   # Contact: Pami Ketolainen <pami.ketolainen@jollamobile.com>
   #%]
 
-[%
-# Test if description of this severity bugs is editable and user is allowed
-# to edit descriptions
-editable = Param('bvp_description_editable_types');
-can_edit_description = (user.in_group('bvp_edit_description') &&
-                            editable.grep(bug.bug_severity).size());
-%]
-
 [% IF can_edit_description %]
 <pre id="bvp_original_description" style="display: none;">
 [% comments.${description}.body %]

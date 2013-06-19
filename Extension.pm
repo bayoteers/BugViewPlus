@@ -11,6 +11,7 @@ package Bugzilla::Extension::BugViewPlus;
 use strict;
 use base qw(Bugzilla::Extension);
 
+use Bugzilla::Config qw(SetParam write_params);
 use Bugzilla::Field qw(get_legal_field_values);
 use Bugzilla::Group;
 use Bugzilla::Template;
@@ -20,21 +21,13 @@ our $VERSION = '0.01';
 
 sub install_update_db {
     my ($self, $args) = @_;
-    my $edit_desc_group = Bugzilla::Group->new({
-            name => "bvp_edit_description"
-        });
-    if (! defined $edit_desc_group) {
-        Bugzilla::Group->create({
-                name => "bvp_edit_description",
-                description => "Users who can edit bug descriptions",
-                isbuggroup => 1,
-                isactive => 0,
-            });
-    } elsif (!$edit_desc_group->is_bug_group) {
+    my $old_group = Bugzilla::Group->new({name => "bvp_edit_description"});
+    if (defined $old_group &&
+            !$old_group->is_bug_group && $old_group->is_active) {
         # Fix earlier installations group type
         Bugzilla->dbh->do(
             "UPDATE groups SET isbuggroup = 1, isactive = 0 WHERE id = ?",
-            undef, $edit_desc_group->id);
+            undef, $old_group->id);
     }
 }
 
@@ -54,14 +47,15 @@ sub bug_end_of_update {
     my $bug_id = $cgi->param('id');
     return unless $bug_id;
     return unless detaint_natural($bug_id);
-    
+
     # Make sure we are udating the same bug and not some related bug
     if ($bug->bug_id == $bug_id) {
 
         # Edit description related stuff
-        if (Bugzilla->user->in_group('bvp_edit_description') &&
-                grep {$_ eq $bug->bug_severity}
-                        @{Bugzilla->params->{bvp_description_editable_types}}) {
+        my $group = Bugzilla->params->{'bvp_description_edit_group'};
+        my $type_editable = grep {$_ eq $bug->bug_severity}
+                @{Bugzilla->params->{bvp_description_editable_types}};
+        if ($type_editable && Bugzilla->user->in_group($group)) {
             # Current description text
             my $old_desc = ${ @{ $bug->comments }[0] }{'thetext'};
 
@@ -107,6 +101,31 @@ sub bug_format_comment {
         push (@$regexes, { match => qr/($value)\s*(\d+)/i,
                 replace => \&_replace_bug_link } );
     }
+}
+
+sub object_end_of_update {
+    my ($self, $args) = @_;
+    my ($new_obj, $old_obj, $changes) = @$args{qw(object old_object changes)};
+
+    # Update user group param if group name changes
+    if ($new_obj->isa("Bugzilla::Group") && defined $changes->{name}) {
+        if ($old_obj->name eq Bugzilla->params->{bvp_description_edit_group}) {
+            SetParam('bvp_description_edit_group', $new_obj->name);
+            write_params();
+        }
+    }
+}
+
+sub template_before_process {
+    my ($self, $args) = @_;
+    return unless $args->{file} eq 'bug/comments.html.tmpl';
+
+    my $group = Bugzilla->params->{'bvp_description_edit_group'};
+    my $severity = $args->{vars}->{bug}->bug_severity;
+    my $type_editable = grep {$_ eq $severity}
+            @{Bugzilla->params->{bvp_description_editable_types}};
+    $args->{vars}->{can_edit_description} =
+        $type_editable && Bugzilla->user->in_group($group) ? 1 : 0;
 }
 
 sub _replace_bug_link {
