@@ -37,6 +37,11 @@ sub config_add_panels {
     $modules->{BugViewPlus} = "Bugzilla::Extension::BugViewPlus::Params";
 }
 
+sub bb_group_params {
+    my ($self, $args) = @_;
+    push(@{$args->{group_params}}, 'bvp_description_edit_group');
+}
+
 sub bug_end_of_update {
     my ($self, $args) = @_;
     my $cgi = Bugzilla->cgi;
