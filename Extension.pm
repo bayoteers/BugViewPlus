@@ -13,7 +13,6 @@ use base qw(Bugzilla::Extension);
 
 use Bugzilla::Config qw(SetParam write_params);
 use Bugzilla::Field qw(get_legal_field_values);
-use Bugzilla::Group;
 use Bugzilla::Template;
 use Bugzilla::Util qw(detaint_natural trick_taint);
 
@@ -21,9 +20,12 @@ our $VERSION = '0.01';
 
 sub install_update_db {
     my ($self, $args) = @_;
-    my $old_group = Bugzilla::Group->new({name => "bvp_edit_description"});
+
+    my $old_group = Bugzilla->dbh->selectrow_hashref(
+            "SELECT name, isactive, isbuggroup FROM groups ".
+            "WHERE name = ?", undef, 'bvp_edit_description');
     if (defined $old_group &&
-            !$old_group->is_bug_group && $old_group->is_active) {
+            !$old_group->{isbuggroup} && $old_group->{isactive}) {
         # Fix earlier installations group type
         Bugzilla->dbh->do(
             "UPDATE groups SET isbuggroup = 1, isactive = 0 WHERE id = ?",

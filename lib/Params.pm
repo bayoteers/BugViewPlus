@@ -18,15 +18,18 @@ use Bugzilla::Field;
 sub get_param_list {
     my ($class) = @_;
 
-    my $old_group = Bugzilla::Group->new({name => "bvp_edit_description"});
+    my @groups = sort @{Bugzilla->dbh->selectcol_arrayref(
+            "SELECT name FROM groups")};
+    my ($old_group) = grep {$_ eq 'bvp_edit_description'} @groups;
+    unshift @groups, '';
 
     my @param_list = (
         {
             name => 'bvp_description_edit_group',
             desc => 'User group that is allowed to edit bug descriptions',
             type    => 's',
-            choices => ['', sort map {$_->name} Bugzilla::Group->get_all()],
-            default => defined $old_group ? $old_group->name : '',
+            choices => \@groups,
+            default => defined $old_group ? $old_group : '',
         },
         {
             name => 'bvp_description_editable_types',
