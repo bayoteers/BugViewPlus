@@ -26,14 +26,14 @@ var _closeInlineEdit = function(button)
         label: 'Edit',
         text: false,
         icons: {primary: 'ui-icon-pencil'},
-    }).off('click').on('click', openInlineEdit);
+    }).off('click').on('click', inlineEditOpen);
     var row = button.parents('tr').eq(0);
     row.next('tr.editor_row').remove();
     row.next('tr.comment_row').remove();
 };
 
 
-var openInlineEdit = Bug.initOnCall(function(ev)
+var inlineEditOpen = function(ev)
 {
     var button = $(ev.currentTarget);
     var row = button.parents('tr').eq(0);
@@ -47,7 +47,7 @@ var openInlineEdit = Bug.initOnCall(function(ev)
     } else {
         _openInlineEdit(bug, button, row);
     }
-});
+};
 
 var _openInlineEdit = function(bug, button, row)
 {
@@ -147,6 +147,6 @@ var initInlineEditor = function() {
         label: 'Edit',
         text: false,
         icons: {primary: 'ui-icon-pencil'},
-    }).click(openInlineEdit);
+    }).click(inlineEditOpen);
     $('tr.bz_time_summary_line').append('<td class="bz_total">');
 };
