@@ -73,16 +73,20 @@ var _openInlineEdit = function(bug, button, row)
         editRow.append(cell);
         if (name) {
             var fname = name == 'actual_time' ? 'work_time' : name
-            var fd = Bug.fd(fname);
-            if (fd == undefined || fd.immutable) return;
+            try {
+                var field = bug.field(fname);
+            } catch (e) {
+                return;
+            }
+            if (field.immutable) return;
             orig_cell.data('name', name);
-            var input = bug.createInput(fd, false, true);
-            if (['remaining_time', 'estimated_time', 'work_time'].indexOf(fd.name) > -1){
+            var input = bug.createInput(field, false, true);
+            if (['remaining_time', 'estimated_time', 'work_time'].indexOf(field.name) > -1){
                 input.css('width', '4em');
             } else {
                 input.css('width', '100%');
             }
-            if (fd.name == 'work_time') cell.append("+");
+            if (field.name == 'work_time') cell.append("+");
             cell.append(input);
         } else if (orig_cell.hasClass('button_column')) {
             $('<buton class="inline_edit" type="button">Save</button>')
@@ -134,7 +138,12 @@ var _inlineEditUpdate = function(bug, name, value)
         var element = $(this);
         if(element.data('name') != name) return;
         name = name == 'work_time' ? 'actual_time' : name;
-        if (Bug.fd(name).multivalue)
+        try {
+            var field = bug.field(name);
+        } catch(e) {
+            return
+        }
+        if (field.multivalue)
             value = value.join(', ');
         if(value != undefined) element.find('span,a').pushStack(element).first().text(value);
     });
