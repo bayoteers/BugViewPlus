@@ -37,8 +37,7 @@
       <td>[% t.is_active ? 'Yes' : 'No' %]</td>
       <td>[% t.description FILTER html %]</td>
       <td>
-        <form method="POST" action="page.cgi">
-          <input type="hidden" name="id" value="bvp_template.html">
+        <form method="POST" action="page.cgi?id=bvp_template.html">
           <input type="hidden" name="tid" value="[% t.id FILTER html %]">
           <button type="submit" name="action" value="remove"
             onclick="return confirm('Are you sure you want to remove [% t.name FILTER html %]')"
@@ -54,8 +53,7 @@
 </table>
 
 <hr>
-<form method="POST" action="page.cgi">
-  <input type="hidden" name="id" value="bvp_template.html">
+<form method="POST" action="page.cgi?id=bvp_template.html">
   [% IF current %]
   <input type="hidden" name="tid" value="[% current.id FILTER html %]">
   [% END %]
