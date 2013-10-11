@@ -157,7 +157,6 @@ sub page_before_template {
     my $current;
     if (defined $tid) {
         $current = Bugzilla::Extension::BugViewPlus::Template->check({id=>$tid});
-        $vars->{current} = $current;
     }
     if ($action) {
         my $values = {
@@ -167,7 +166,7 @@ sub page_before_template {
             content => scalar $cgi->param('content'),
         };
         if ($action eq 'create') {
-            $vars->{current} = Bugzilla::Extension::BugViewPlus::Template->create($values);
+            $current = Bugzilla::Extension::BugViewPlus::Template->create($values);
             $vars->{message} = 'bvp_template_created';
         } elsif ($action eq 'save') {
             ThrowCodeError('param_required', {param => 'tid', function=>'save'})
@@ -175,11 +174,19 @@ sub page_before_template {
             $current->set_all($values);
             $current->update();
             $vars->{message} = 'bvp_template_saved';
+        } elsif ($action eq 'remove') {
+            ThrowCodeError('param_required', {param => 'tid', function=>'remove'})
+                unless defined $current;
+            $current->remove_from_db();
+            $vars->{message} = 'bvp_template_removed';
+            $vars->{name} = $current->name;
+            $current = undef;
         } else {
             ThrowCodeError('param_invalid',
                 {param => $action, function=>'action'});
         }
     }
+    $vars->{current} = $current;
     $vars->{templates} = [Bugzilla::Extension::BugViewPlus::Template->get_all()];
 }
 

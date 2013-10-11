@@ -14,7 +14,6 @@
 #templates th { text-align: left; }
 #templates td.current { font-weight: bold; }
 #templates tr.odd { background-color: lightgray; }
-#templates td { padding: 5px; }
 #edit_template th { text-align: right; }
 [% END %]
 
@@ -38,19 +37,24 @@
       <td>[% t.is_active ? 'Yes' : 'No' %]</td>
       <td>[% t.description FILTER html %]</td>
       <td>
-        [% UNLESS t.id == current.id %]
-        <a href="page.cgi?id=bvp_template.html&amp;tid=[% t.id FILTER url %]">edit</a>
-        [% END %]
+        <form method="POST" action="page.cgi">
+          <input type="hidden" name="id" value="bvp_template.html">
+          <input type="hidden" name="tid" value="[% t.id FILTER html %]">
+          <button type="submit" name="action" value="remove"
+            onclick="return confirm('Are you sure you want to remove [% t.name FILTER html %]')"
+            >Remove</button>
+          [% UNLESS t.id == current.id %]
+          <button type="submit">Edit</button>
+          [% END %]
+        </form>
       </td>
     </tr>
   [% END %]
   </tbody>
 </table>
 
-<a href="page.cgi?id=bvp_template.html">Create new</a>
-
 <hr>
-<form method="POST">
+<form method="POST" action="page.cgi">
   <input type="hidden" name="id" value="bvp_template.html">
   [% IF current %]
   <input type="hidden" name="tid" value="[% current.id FILTER html %]">
@@ -78,8 +82,10 @@
       </td>
     </tr>
   </table>
-  <button type="submit" name="action" value="[% current ? 'save' : 'create' %]">
-    [% current ? 'Save' : 'Create' %]</button>
+  [% IF current %]
+  <button type="submit" name="action" value="save">Save</button>
+  [% END %]
+  <button type="submit" name="action" value="create">Create New</button>
 </form>
 
 

@@ -4,5 +4,7 @@ Template '[% current.name FILTER html %]' saved
 [% ELSIF message_tag == 'bvp_template_created' %]
 New template '[% current.name FILTER html %]' created
 
-[% END %]
+[% ELSIF message_tag == 'bvp_template_removed' %]
+Template '[% name FILTER html %]' removed
 
+[% END %]
