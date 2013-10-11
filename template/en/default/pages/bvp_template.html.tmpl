@@ -1,0 +1,86 @@
+[%#
+  # This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # Copyright (C) 2013 Jolla Ltd.
+  # Contact: Pami Ketolainen <pami.ketolainen@jollamobile.com>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+[% style = BLOCK %]
+#templates { border-spacing: 0px; width: 80ex; }
+#templates th { text-align: left; }
+#templates td.current { font-weight: bold; }
+#templates tr.odd { background-color: lightgray; }
+#templates td { padding: 5px; }
+#edit_template th { text-align: right; }
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+    title = terms.Bug _ " templates"
+%]
+
+<table id="templates">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Active</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+  [% FOREACH t = templates %]
+    <tr class="[% 'odd' IF loop.odd %]">
+      <td class="[% 'current' IF t.id == current.id %]">
+        [% '* ' IF t.id == current.id %][% t.name FILTER html %]</td>
+      <td>[% t.is_active ? 'Yes' : 'No' %]</td>
+      <td>[% t.description FILTER html %]</td>
+      <td>
+        [% UNLESS t.id == current.id %]
+        <a href="page.cgi?id=bvp_template.html&amp;tid=[% t.id FILTER url %]">edit</a>
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+  </tbody>
+</table>
+
+<a href="page.cgi?id=bvp_template.html">Create new</a>
+
+<hr>
+<form method="POST">
+  <input type="hidden" name="id" value="bvp_template.html">
+  [% IF current %]
+  <input type="hidden" name="tid" value="[% current.id FILTER html %]">
+  [% END %]
+  <table id="edit_template">
+    <tr>
+      <th><label for="name">Name:</label></th>
+      <td><input type="text" name="name"
+          value="[% current.name FILTER html %]"/></td>
+    </tr>
+    <tr>
+      <th><label for="is_active">Active:</label></th>
+      <td><input type="checkbox" name="is_active"
+        value="1" [% 'checked' IF current.is_active %]/></td>
+    </tr>
+    <tr>
+      <th><label for="description">Description:</label></th>
+      <td><input type="text" name="description" size="70"
+          value="[% current.description FILTER html %]"/></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <textarea name="content" cols="80" rows="20">
+          [% current ? current.content : 'Template content here...' FILTER html %]</textarea>
+      </td>
+    </tr>
+  </table>
+  <button type="submit" name="action" value="[% current ? 'save' : 'create' %]">
+    [% current ? 'Save' : 'Create' %]</button>
+</form>
+
+
+[% PROCESS global/footer.html.tmpl %]

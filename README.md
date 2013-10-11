@@ -8,6 +8,7 @@ This extension provides several enhancements to normal bug viewing experience.
  *  Format '< severity > #' into a bug link in comments
  *  Optional simplified bug view instead of the normal full fields editor
  *  Inline editing of bugs in bug list
+ *  Simple content templates for new bug creation
 
 
 Installation

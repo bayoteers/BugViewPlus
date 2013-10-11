@@ -12,9 +12,12 @@ use strict;
 use base qw(Bugzilla::Extension);
 
 use Bugzilla::Config qw(SetParam write_params);
+use Bugzilla::Error;
 use Bugzilla::Field qw(get_legal_field_values);
 use Bugzilla::Template;
 use Bugzilla::Util qw(detaint_natural trick_taint);
+
+use Bugzilla::Extension::BugViewPlus::Template;
 
 our $VERSION = '0.01';
 
@@ -110,6 +113,23 @@ sub bug_format_comment {
     }
 }
 
+sub db_schema_abstract_schema {
+    my ($self, $args) = @_;
+    my $schema = $args->{schema};
+
+    # Table for storing the bug templates
+    $schema->{bvp_templates} = {
+        FIELDS => [
+            id => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1},
+            name => {TYPE => 'TINYTEXT', NOTNULL => 1},
+            is_active => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0},
+            description => {TYPE => 'TINYTEXT'},
+            content => {TYPE => 'MEDIUMTEXT'},
+        ],
+        INDEXES => [],
+    };
+}
+
 sub object_end_of_update {
     my ($self, $args) = @_;
     my ($new_obj, $old_obj, $changes) = @$args{qw(object old_object changes)};
@@ -121,6 +141,46 @@ sub object_end_of_update {
             write_params();
         }
     }
+}
+
+sub page_before_template {
+    my ($self, $args) = @_;
+    return unless ($args->{page_id} eq 'bvp_template.html');
+    ThrowUserError('auth_failure', {
+            group => 'admin', action => 'access',
+            object => 'administrative_pages'
+        }) unless Bugzilla->user->in_group('admin');;
+    my $vars = $args->{vars};
+    my $cgi = Bugzilla->cgi;
+    my $tid = $cgi->param('tid');
+    my $action = $cgi->param('action') || '';
+    my $current;
+    if (defined $tid) {
+        $current = Bugzilla::Extension::BugViewPlus::Template->check({id=>$tid});
+        $vars->{current} = $current;
+    }
+    if ($action) {
+        my $values = {
+            name => scalar $cgi->param('name'),
+            is_active => scalar $cgi->param('is_active'),
+            description => scalar $cgi->param('description'),
+            content => scalar $cgi->param('content'),
+        };
+        if ($action eq 'create') {
+            $vars->{current} = Bugzilla::Extension::BugViewPlus::Template->create($values);
+            $vars->{message} = 'bvp_template_created';
+        } elsif ($action eq 'save') {
+            ThrowCodeError('param_required', {param => 'tid', function=>'save'})
+                unless defined $current;
+            $current->set_all($values);
+            $current->update();
+            $vars->{message} = 'bvp_template_saved';
+        } else {
+            ThrowCodeError('param_invalid',
+                {param => $action, function=>'action'});
+        }
+    }
+    $vars->{templates} = [Bugzilla::Extension::BugViewPlus::Template->get_all()];
 }
 
 sub template_before_process {

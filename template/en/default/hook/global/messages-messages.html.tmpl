@@ -1,0 +1,8 @@
+[% IF message_tag == 'bvp_template_saved' %]
+Template '[% current.name FILTER html %]' saved
+
+[% ELSIF message_tag == 'bvp_template_created' %]
+New template '[% current.name FILTER html %]' created
+
+[% END %]
+
