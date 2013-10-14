@@ -1,0 +1,17 @@
+ul.bvp_template_list {
+  list-style: none;
+  padding: 0px;
+  margin-top: 0px;
+}
+ul.bvp_template_list li {
+  display: inline;
+  margin-right: 1ex;
+  padding: 2px;
+}
+li.bvp_template {
+  /*border: solid 1px;
+  border-radius: 5px;*/
+  cursor: pointer;
+}
+li.bvp_template:before { content: '['; }
+li.bvp_template:after { content: ']'; }

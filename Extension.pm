@@ -19,6 +19,8 @@ use Bugzilla::Util qw(detaint_natural trick_taint);
 
 use Bugzilla::Extension::BugViewPlus::Template;
 
+use JSON;
+
 our $VERSION = '0.01';
 
 sub install_update_db {
@@ -192,14 +194,21 @@ sub page_before_template {
 
 sub template_before_process {
     my ($self, $args) = @_;
-    return unless $args->{file} eq 'bug/comments.html.tmpl';
+    if ($args->{file} eq 'bug/comments.html.tmpl') {
+        my $group = Bugzilla->params->{'bvp_description_edit_group'};
+        my $severity = $args->{vars}->{bug}->bug_severity;
+        my $type_editable = grep {$_ eq $severity}
+                @{Bugzilla->params->{bvp_description_editable_types}};
+        $args->{vars}->{can_edit_description} =
+            $type_editable && Bugzilla->user->in_group($group) ? 1 : 0;
+    } elsif ($args->{file} eq 'bug/create/create.html.tmpl' ||
+        $args->{file} eq 'pages/quickideas/enter.html.tmpl') {
+        $args->{vars}->{bvp_templates_json} =
+            JSON->new->utf8->allow_blessed->convert_blessed->encode(
+                Bugzilla::Extension::BugViewPlus::Template->match(
+                    {is_active => 1}));
+    }
 
-    my $group = Bugzilla->params->{'bvp_description_edit_group'};
-    my $severity = $args->{vars}->{bug}->bug_severity;
-    my $type_editable = grep {$_ eq $severity}
-            @{Bugzilla->params->{bvp_description_editable_types}};
-    $args->{vars}->{can_edit_description} =
-        $type_editable && Bugzilla->user->in_group($group) ? 1 : 0;
 }
 
 sub _replace_bug_link {

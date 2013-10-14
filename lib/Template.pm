@@ -131,6 +131,16 @@ sub _check_value {
     return $value;
 }
 
+sub TO_JSON {
+    my $self = shift;
+    return {
+        id => $self->id,
+        name => $self->name,
+        description => $self->description,
+        content => $self->content,
+    }
+}
+
 =head1 METHODS
 
 =head2 none at the moment

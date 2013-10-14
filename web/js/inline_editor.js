@@ -159,3 +159,5 @@ var initInlineEditor = function() {
     }).click(inlineEditOpen);
     $('tr.bz_time_summary_line').append('<td class="bz_total">');
 };
+
+$(initInlineEditor);

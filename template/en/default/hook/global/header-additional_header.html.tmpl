@@ -8,25 +8,28 @@
   #%]
 [% IF template.name == 'list/list.html.tmpl'
     AND user.id AND Param('bvp_inline_editor') %]
-<script type="text/javascript"
-    src="[% 'extensions/BugViewPlus/web/js/inline_editor.js' FILTER mtime %]"></script>
-<script type="text/javascript">
-var INLINE_EDIT_COLUMNS = [
-[% FOREACH column = displaycolumns %]
-    "[% column %]",
+  <script type="text/javascript"
+    src="[% 'extensions/BugViewPlus/web/js/inline_editor.js' FILTER mtime %]">
+  </script>
+  <link rel="stylesheet"
+    href="[% 'extensions/BugViewPlus/web/css/inline_editor.css' FILTER mtime %]" />
+  <script type="text/javascript">
+    var INLINE_EDIT_COLUMNS = [
+    [% FOREACH column = displaycolumns %]
+      "[% column %]",
+    [% END %]
+    ];
+  </script>
 [% END %]
-];
 
-$(initInlineEditor);
-</script>
-<style>
-tr.comment_row td {
-    vertical-align: top;
-    border-bottom: dashed 1px;
-}
-button.inline_edit {
-    width: 1.5em;
-    height: 1.5em;
-}
-</style>
+[% IF template.name == 'bug/create/create.html.tmpl' ||
+      template.name == 'pages/quickideas/enter.html.tmpl' %]
+<link rel="stylesheet"
+    href="[% 'extensions/BugViewPlus/web/css/templates.css' FILTER mtime %]" />
+  <script type="text/javascript"
+    src="[% 'extensions/BugViewPlus/web/js/templates.js' FILTER mtime %]">
+  </script>
+  <script type="text/javascript">
+    var BVP_TEMPLATES = [% bvp_templates_json FILTER none %];
+  </script>
 [% END %]

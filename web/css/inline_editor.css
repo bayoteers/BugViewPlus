@@ -1,0 +1,8 @@
+tr.comment_row td {
+  vertical-align: top;
+  border-bottom: dashed 1px;
+}
+button.inline_edit {
+  width: 1.5em;
+  height: 1.5em;
+}
