@@ -8,35 +8,35 @@
   #%]
 
 [% IF can_edit_description %]
-<pre id="bvp_original_description" style="display: none;">
-[% comments.${description}.body %]
-</pre>
-
 <script type="text/javascript">
+
+var bvp_comment_order = "[% sort_order FILTER js %]";
+
+[% SET d = sort_order == 'newest_to_oldest' ? comments.size - 1 : 0 %]
+var bvp_original_description = "[% comments.${d}.body FILTER js %]";
+var bvp_description_element = $("div.bz_comment[%
+        sort_order == 'newest_to_oldest' ? ':last' : ':first' %]");
 
 function toggle_comment_edit()
 {
-    var element = $("#comment_text_[% description %]").first();
-    var nodeName = element[0].nodeName;
-    if (nodeName == "PRE") {
+    var editor = bvp_description_element.find("#bvp_description_edit");
+
+    if (editor.size() == 0) {
         $(this).text("cancel")
             .attr("title", "Cancel description changes");
-        edit = $("<textarea/>")
-            .attr("id", "comment_text_[% description %]")
+        editor = $("<textarea/>")
+            .attr("id", "bvp_description_edit")
             .attr("name", "bvp_description")
             .attr("cols", 80)
             .attr("rows", 25)
-            .text($("#bvp_original_description").text());
-        element.hide()
-            .attr("id", "comment_text_[% description %]_orig")
-            .before(edit);
-    } else if (nodeName == "TEXTAREA") {
+            .text(bvp_original_description);
+        bvp_description_element.find("pre.bz_comment_text")
+            .after(editor).hide();
+    } else {
         $(this).text("edit")
             .attr("title", "Edit description")
-        element.remove();
-        $("#comment_text_[% description %]_orig")
-            .attr("id", "comment_text_[% description %]")
-            .show();
+        editor.remove();
+        bvp_description_element.find("pre.bz_comment_text").show();
     }
     return false;
 }
@@ -44,10 +44,10 @@ function toggle_comment_edit()
 $(function() {
     // Add edit description link
     $('<a href="#">edit</a>')
+        .prependTo(bvp_description_element.find(".bz_comment_actions"))
         .attr("title", "Edit description")
-        .click(toggle_comment_edit)
-        .insertBefore("#comment_link_[% description %]")
-        .before(" [").after("] ");
+        .before(" [").after("] ")
+        .click(toggle_comment_edit);
 
     // Add last comment link
     $("ul.bz_collapse_expand_comments").append(
