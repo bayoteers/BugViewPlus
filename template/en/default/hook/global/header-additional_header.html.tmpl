@@ -16,7 +16,7 @@
   <script type="text/javascript">
     var INLINE_EDIT_COLUMNS = [
     [% FOREACH column = displaycolumns %]
-      "[% column %]",
+      "[% column FILTER js %]",
     [% END %]
     ];
   </script>

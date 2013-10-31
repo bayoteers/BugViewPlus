@@ -62,8 +62,8 @@ $(function() {
     [% SWITCH name %]
         [% CASE ['assigned_to', 'qa_contact', 'reporter'] %]
             <th class="field_label">
-                <b><a href="page.cgi?id=fields.html#[% name %]">
-                [% bug_fields.${name}.description %]</a></b>:
+                <b><a href="page.cgi?id=fields.html#[% name FILTER uri %]">
+                [% bug_fields.${name}.description FILTER html %]</a></b>:
             </th>
             <td>[% INCLUDE global/user.html.tmpl who = bug.${name} %]</td>
 
@@ -105,7 +105,7 @@ $(function() {
                     no_tds = 1 %]
                 </td>
             [% CATCH %]
-                <td>Failed to display field '[% name %]'</td>
+                <td>Failed to display field '[% name FILTER html %]'</td>
             [% END %]
     [% END %]
 </tr>

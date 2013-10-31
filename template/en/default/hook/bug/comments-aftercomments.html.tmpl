@@ -15,7 +15,7 @@ var bvp_comment_order = "[% sort_order FILTER js %]";
 [% SET d = sort_order == 'newest_to_oldest' ? comments.size - 1 : 0 %]
 var bvp_original_description = "[% comments.${d}.body FILTER js %]";
 var bvp_description_element = $("div.bz_comment[%
-        sort_order == 'newest_to_oldest' ? ':last' : ':first' %]");
+        d == '0' ? ':first' : ':last' %]");
 
 function toggle_comment_edit()
 {
