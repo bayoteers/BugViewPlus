@@ -10,7 +10,7 @@
 var INLINE_EDIT_COL_MAP = {
     short_short_desc: 'summary',
     assigned_to_realname: 'assigned_to',
-    bug_status: 'status',
+    bug_status: 'status'
 };
 
 
@@ -25,7 +25,7 @@ var _closeInlineEdit = function(button)
     button.button({
         label: 'Edit',
         text: false,
-        icons: {primary: 'ui-icon-pencil'},
+        icons: {primary: 'ui-icon-pencil'}
     }).off('click').on('click', inlineEditOpen);
     var row = button.parents('tr').eq(0);
     row.next('tr.editor_row').remove();
@@ -54,7 +54,7 @@ var _openInlineEdit = function(bug, button, row)
     button.button({
         text: false,
         label: 'Cancel',
-        icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'},
+        icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'}
     }).off('click').on('click', inlineEditCancel);
 
     var colCount = row.find('td').size();
@@ -92,7 +92,7 @@ var _openInlineEdit = function(bug, button, row)
             $('<buton class="inline_edit" type="button">Save</button>')
                 .button({
                     text: false,
-                    icons: {primary: 'ui-icon-disk'},
+                    icons: {primary: 'ui-icon-disk'}
                     })
                 .appendTo(cell)
                 .on('click', _inlineEditSave);
@@ -155,7 +155,7 @@ var initInlineEditor = function() {
     $('table.bz_buglist button.inline_edit').button({
         label: 'Edit',
         text: false,
-        icons: {primary: 'ui-icon-pencil'},
+        icons: {primary: 'ui-icon-pencil'}
     }).click(inlineEditOpen);
     $('tr.bz_time_summary_line').append('<td class="bz_total">');
 };
