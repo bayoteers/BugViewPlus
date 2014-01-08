@@ -16,18 +16,17 @@ var INLINE_EDIT_COL_MAP = {
 
 var inlineEditCancel = function(ev)
 {
-    var button = $(ev.currentTarget);
-    _closeInlineEdit(button);
+    var link = $(ev.currentTarget);
+    _closeInlineEdit(link);
+    ev.preventDefault();
 };
 
-var _closeInlineEdit = function(button)
+var _closeInlineEdit = function(link)
 {
-    button.button({
-        label: 'Edit',
-        text: false,
-        icons: {primary: 'ui-icon-pencil'}
-    }).off('click').on('click', inlineEditOpen);
-    var row = button.parents('tr').eq(0);
+    link.attr('title', 'Edit')
+        .text('[+]')
+        .off('click').on('click', inlineEditOpen);
+    var row = link.parents('tr').eq(0);
     row.next('tr.editor_row').remove();
     row.next('tr.comment_row').remove();
 };
@@ -35,27 +34,27 @@ var _closeInlineEdit = function(button)
 
 var inlineEditOpen = function(ev)
 {
-    var button = $(ev.currentTarget);
-    var row = button.parents('tr').eq(0);
-    var bug = button.data('bug');
+    var link = $(ev.currentTarget);
+    var row = link.parents('tr').eq(0);
+    var bug = link.data('bug');
     if (bug == undefined) {
         var bugId = row.attr('id').slice(1);
         Bug.get(bugId, function(bug) {
-            button.data('bug', bug);
+            link.data('bug', bug);
             bug.updated(_inlineEditUpdate);
-            _openInlineEdit(bug, button, row);});
+            _openInlineEdit(bug, link, row);});
     } else {
-        _openInlineEdit(bug, button, row);
+        _openInlineEdit(bug, link, row);
     }
+    ev.preventDefault();
 };
 
-var _openInlineEdit = function(bug, button, row)
+var _openInlineEdit = function(bug, link, row)
 {
-    button.button({
-        text: false,
-        label: 'Cancel',
-        icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'}
-    }).off('click').on('click', inlineEditCancel);
+    link.attr('title', 'Cancel')
+        .text('[-]')
+        .off('click')
+        .on('click', inlineEditCancel);
 
     var colCount = row.find('td').size();
     var editRow = $('<tr class="editor_row"></tr>');
@@ -89,7 +88,7 @@ var _openInlineEdit = function(bug, button, row)
             if (field.name == 'work_time') cell.append("+");
             cell.append(input);
         } else if (orig_cell.hasClass('button_column')) {
-            $('<buton class="inline_edit" type="button">Save</button>')
+            $('<button class="inline_edit" type="button">Save</button>')
                 .button({
                     text: false,
                     icons: {primary: 'ui-icon-disk'}
@@ -115,8 +114,8 @@ var _openInlineEdit = function(bug, button, row)
 var _inlineEditSave = function(ev)
 {
     var row = $(ev.currentTarget).parents('tr').eq(0).prev("tr.bz_bugitem");
-    var button = row.find('button');
-    var bug = button.data('bug');
+    var link = row.find('a.inline_edit');
+    var bug = link.data('bug');
     var editRows = row.nextUntil('tr.bz_bugitem');
     editRows.find('td > *').filter(':input').each(function() {
         // Make sure all values are set
@@ -127,8 +126,9 @@ var _inlineEditSave = function(ev)
     });
     bug.save().done(function() {
         // Update bug row when save is done
-        _closeInlineEdit(button);
+        _closeInlineEdit(link);
     });
+    ev.preventDefault();
 };
 
 var _inlineEditUpdate = function(bug, name, value)
@@ -151,12 +151,8 @@ var _inlineEditUpdate = function(bug, name, value)
 
 var initInlineEditor = function() {
     var rows = $('table.bz_buglist tr.bz_bugitem');
-    rows.append('<td class="button_column"><button type="button" class="inline_edit"></button></td>');
-    $('table.bz_buglist button.inline_edit').button({
-        label: 'Edit',
-        text: false,
-        icons: {primary: 'ui-icon-pencil'}
-    }).click(inlineEditOpen);
+    rows.append('<td class="button_column"><a href="#" title="Edit" class="inline_edit">[+]</a></td>');
+    $('table.bz_buglist a.inline_edit').click(inlineEditOpen);
     $('tr.bz_time_summary_line').append('<td class="bz_total">');
 };
 
