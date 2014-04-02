@@ -53,13 +53,14 @@ sub get_param_list {
         },
         {
             name => 'bvp_simple_bug_fields',
-            desc => 'The bug fields shown in the simplified bug view. '.
-                'Use a comma separated list of bug field names. "importance" '.
-                'can be used to get the combined priority/severity/votes. '.
-                '"#" can be used to split the fields in several columns',
+            desc => 'CSS selector for bug fields shown in the simple bug view. '.
+                'Use a comma separated list of CSS selectors. The selectors '.
+                'are used to get the list of tr-elements containing the '.
+                'elements which will be shown in the simplified bug view.',
             type => 't',
-            default => 'bug_status,product,component,importance,#,'.
-                'reporter,assigned_to'
+            default => '#bz_field_status,#field_container_product,'.
+                '#field_container_component,select#priority,'.
+                '#bz_show_bug_column_2 th:first,#bz_assignee_input'
         },
         {
             name => 'bvp_inline_editor',

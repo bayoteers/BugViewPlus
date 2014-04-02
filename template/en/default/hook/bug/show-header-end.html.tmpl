@@ -1,0 +1,4 @@
+[% IF user.id AND Param("bvp_simple_bug_view") %]
+  [% javascript_urls.push('extensions/BugViewPlus/web/js/editor_toggle.js') %]
+  [% style_urls.push('extensions/BugViewPlus/web/css/editor_toggle.css') %]
+[% END %]
