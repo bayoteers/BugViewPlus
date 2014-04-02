@@ -18,7 +18,7 @@
     <script type="text/javascript">
     $(function() {
       bvpInitEditorToggle("[% Param('bvp_simple_bug_fields') FILTER js %]",
-        "remember");
+        "[% user.settings.bvp_hide_advanced.value FILTER js %]");
     })
     </script>
   </td>

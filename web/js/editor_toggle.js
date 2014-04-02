@@ -27,7 +27,7 @@ var bvpInitEditorToggle = function(simpleSelector, hideAdvanced) {
     if (hideAdvanced == "remember") {
         hideAdvanced = $.cookie("bvp_hide_advanced") ? true : false;
     } else {
-        hideAdvanced = hideAdvanced == "yes" ? true : false;
+        hideAdvanced = hideAdvanced == "on" ? true : false;
     }
     var toggleButton = $("#bvp_toggle_editor").on('click', bvpToggleEditor);
     $("#bz_top_half_spacer").after(toggleButton);

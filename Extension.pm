@@ -16,6 +16,7 @@ use Bugzilla::Error;
 use Bugzilla::Field qw(get_legal_field_values);
 use Bugzilla::Template;
 use Bugzilla::Util qw(detaint_natural trick_taint);
+use Bugzilla::User::Setting qw(add_setting);
 
 use Bugzilla::Extension::BugViewPlus::Template;
 
@@ -36,6 +37,10 @@ sub install_update_db {
             "UPDATE groups SET isbuggroup = 1, isactive = 0 WHERE id = ?",
             undef, $old_group->id);
     }
+}
+
+sub install_before_final_checks {
+    add_setting('bvp_hide_advanced', ['remember', 'on', 'off'], 'remember');
 }
 
 sub config_add_panels {
