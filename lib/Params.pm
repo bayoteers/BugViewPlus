@@ -52,7 +52,7 @@ sub get_param_list {
             default => 1
         },
         {
-            name => 'bvp_simple_bug_fields',
+            name => 'bvp_simple_fields_selector',
             desc => 'CSS selector for bug fields shown in the simple bug view. '.
                 'Use a comma separated list of CSS selectors. The selectors '.
                 'are used to get the list of tr-elements containing the '.

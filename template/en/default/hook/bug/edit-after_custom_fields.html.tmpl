@@ -17,7 +17,7 @@
     </button>
     <script type="text/javascript">
     $(function() {
-      bvpInitEditorToggle("[% Param('bvp_simple_bug_fields') FILTER js %]",
+      bvpInitEditorToggle("[% Param('bvp_simple_fields_selector') FILTER js %]",
         "[% user.settings.bvp_hide_advanced.value FILTER js %]");
     })
     </script>
