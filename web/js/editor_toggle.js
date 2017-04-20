@@ -4,17 +4,6 @@ var bvpToggleEditor = function(ev, ui)
     var button = $("#bvp_toggle_editor");
     $(".show-text,.hide-text", button).toggle();
     $("table.edit_form").toggleClass("bvp-simple");
-
-    // Move comment box depending on the view
-    if (button.data("minimal")) {
-        $("table#bz_big_form_parts").insertAfter("table.edit_form");
-        $("div.bz_group_visibility_section,div.bz_add_comment").show();
-        $("div#add_comment").appendTo("table#bz_big_form_parts td:first");
-    } else {
-        $("table#bz_big_form_parts").insertAfter("div#comments");
-        $("div.bz_group_visibility_section,div.bz_add_comment").hide();
-        $("div#add_comment").prependTo("table#bz_big_form_parts td:first");
-    }
     var minimal = button.data("minimal") ? false : true;
     button.data("minimal", minimal);
     if (ui != 'init') {
