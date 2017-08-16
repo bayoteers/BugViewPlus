@@ -9,6 +9,7 @@ This extension provides several enhancements to normal bug viewing experience.
  *  Optional simplified bug view instead of the normal full fields editor
  *  Inline editing of bugs in bug list
  *  Simple content templates for new bug creation
+ *  Add all open and closed options in advanced search bug status
 
 
 Installation

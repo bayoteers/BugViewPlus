@@ -1,0 +1,17 @@
+<script type="text/javascript">
+$(function() {
+  var open = $('<option value="__open__">all open</option>')
+  var closed = $('<option value="__closed__">all closed</option>')
+  $("select[name=bug_status]").prepend(open, closed)
+
+  [% SET stats = Bugzilla.cgi.param('bug_status') %]
+  [% SET stats = default.bug_status IF !stats %]
+  [% IF stats.grep('__open__').size() %]
+  open.prop('selected', true)
+  [% END %]
+  [% IF stats.grep('__closed__').size() %]
+  closed.prop('selected', true)
+  [% END %]
+})
+</script>
+
