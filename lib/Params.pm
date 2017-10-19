@@ -14,6 +14,7 @@ use warnings;
 
 use Bugzilla::Config::Common;
 use Bugzilla::Field;
+use Bugzilla::Constants qw(FIELD_TYPE_SINGLE_SELECT);
 
 sub get_param_list {
     my ($class) = @_;
@@ -22,6 +23,9 @@ sub get_param_list {
             "SELECT name FROM groups")};
     my ($old_group) = grep {$_ eq 'bvp_edit_description'} @groups;
     unshift @groups, '';
+    my @select_fields = sort map (
+        $_->name, @{Bugzilla->fields({type=>FIELD_TYPE_SINGLE_SELECT})}
+    );
 
     my @param_list = (
         {
@@ -67,6 +71,13 @@ sub get_param_list {
             desc => 'Enable/disable the bug list inline editor.',
             type => 'b',
             default => 1
+        },
+        {
+            name => 'bvp_summary_prefix_fields',
+            desc => 'Fields from which the value is added as prefix to summary',
+            type    => 'm',
+            choices => \@select_fields,
+            default => [],
         },
     );
     return @param_list;

@@ -19,6 +19,7 @@ use Bugzilla::Util qw(detaint_natural trick_taint);
 use Bugzilla::User::Setting qw(add_setting);
 
 use Bugzilla::Extension::BugViewPlus::Template;
+use Bugzilla::Extension::BugViewPlus::Util qw(prefix_shortdesc);
 
 use JSON;
 
@@ -52,6 +53,18 @@ sub config_add_panels {
 sub bb_group_params {
     my ($self, $args) = @_;
     push(@{$args->{group_params}}, 'bvp_description_edit_group');
+}
+
+sub bug_end_of_create {
+    my ($self, $args) = @_;
+    my $bug = $args->{bug};
+    prefix_shortdesc($bug);
+}
+
+sub bug_start_of_update {
+    my ($self, $args) = @_;
+    my ($bug, $changes) = @$args{qw(bug changes)};
+    prefix_shortdesc($bug, $changes);
 }
 
 sub bug_end_of_update {

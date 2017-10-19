@@ -10,6 +10,7 @@ This extension provides several enhancements to normal bug viewing experience.
  *  Inline editing of bugs in bug list
  *  Simple content templates for new bug creation
  *  Add all open and closed options in advanced search bug status
+ *  Option to automatically prefix bug summary with any select field value
 
 
 Installation
